@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Frases de Autoconcepto</title>
+<style>
+    body {
+        background-color: black;
+        color: white;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    button{
+  background:#1AAB8A;
+  color:#fff;
+  border:none;
+  position:relative;
+  height:60px;
+  font-size:1.6em;
+  padding:0 2em;
+  cursor:pointer;
+  transition:800ms ease all;
+  outline:none;
+  margin-left: 35%;
+  margin-right: 35%;
+  border-radius: 10px;
+}
+button:hover{
+  background:#fff;
+  color:#1AAB8A;
+}
+button:before,button:after{
+  content:'';
+  position:absolute;
+  top:0;
+  right:0;
+  height:2px;
+  width:0;
+  background: #1AAB8A;
+  transition:400ms ease all;
+}
+button:after{
+  right:inherit;
+  top:inherit;
+  left:0;
+  bottom:0;
+}
+button:hover:before,button:hover:after{
+  width:100%;
+  transition:800ms ease all;
+}
+
+    /* Estilos para la pantalla modal */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-content {
+        background-color: #333;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 80%;
+    }
+
+    .close {
+        color: white;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover {
+        color: #bbb;
+    }
+    
+</style>
+</head>
+<body>
+    <h1>Generador de Frases</h1>
+    <button class="boton" onclick="abrirModal()">Crea mi frase...</button>
+
+    <!-- Pantalla modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <p id="fraseGenerada"></p>
+            <button onclick="generarFrase()">Nueva Frase</button>
+        </div>
+    </div>
+
+    <script>
+        // Lista de inicios de frases poéticas sobre autoconcepto
+        const iniciosFrases = [
+            "En el espejo de mi alma veo reflejado...",
+            "Mi ser es un poema escrito con...",
+            "Soy la melodía que baila entre...",
+            "En mi universo interior, florecen...",
+            "Bajo la luz de mi propia verdad, descubro...",
+            "Soy un lienzo de sueños tejido con...",
+            "Soy un poema inacabado, escribiendo versos...",
+            "En el espejo de mi alma, encuentro la belleza...",
+            "Cada cicatriz en mi piel es un relato de ...",
+            "Soy la melodía única que danza ....",
+            "Mis sueños son estrellas que guían ...",
+            "En mis ojos se refleja el universo entero ...",
+            "Mi voz es un eco de mis verdades, resonando ...",
+            "En el jardín de mi corazón, florecen ...",
+            "Soy un lienzo en blanco, pintando mi historia ...",
+            "Mis pasos son notas en la sinfonía de mi destino...",
+            "En cada amanecer, descubro una ....",
+            "Soy el arquitecto de mis sueños, construyendo ...",
+            "En mis alas de libertad, encuentro el ...",
+            "Soy el poeta y la poesía, tejiendo ...",
+            "Mis miedos son sombras que desvanecen ...",
+            "Soy un océano de emociones, navegando ...",
+            "En mis silencios, resuena la melodía ...",
+            "Soy el eco de mis ancestros, llevando en mí la fuerza ....",
+            "En cada desafío, encuentro la oportunidad ....",
+            "Soy un viajero en el laberinto de mi ser, explorando...",
+            "En cada caída, encuentro la fuerza ....",
+            "Soy el amanecer y el crepúsculo, en constante ...",
+            "En mis lágrimas, yace la lluvia ...",
+            "Soy un cuento de hadas viviente, escribiendo...",
+            "En cada herida, encuentro la oportunidad ....",
+            "Soy el reflejo de las estrellas, brillando....",
+            "En mi sombra, encuentro la profundidad ....",
+            "Soy el eco de la naturaleza, bailando ....",
+            "En cada suspiro, encuentro la fuerza para ...",
+            "Soy un verso en el poema del cosmos, tejiendo ....",
+            "En mis raíces, encuentro la fortaleza ....",
+            "Soy el eco de la luna, reflejando la luz ...",
+            "En cada cauce, encuentro la corriente que me lleva ...",
+            "Soy el fuego que arde en el corazón....",
+            "En mis lágrimas, encuentro el río que me lleva ...",
+            "Soy el amanecer que despierta en cada alma, recordando ...",
+            "En cada tempestad, encuentro la calma ...",
+            "Soy el eco de la montaña, resonando ....",
+            "En cada sombra, encuentro la luz que guía ...",
+            "Soy el cielo estrellado, reflejando la infinita ...",
+            "En cada flor, encuentro la fragancia ...",
+            "Soy el sol naciente, iluminando ....",
+            "En cada susurro del viento, encuentro ...",
+            "Soy el eco de los bosques antiguos, llevando ...",
+            "En cada pregunta, encuentro la respuesta ...",
+            "Soy el río que fluye hacia el mar infinito, donde...",
+            "En cada estrella fugaz, encuentro el deseo ....",
+            "Soy el eco de las montañas, resonando ....",
+            "En cada sueño, encuentro la semilla ...",
+            "Soy el susurro del viento, llevando en mí ...."
+            // Agrega más frases poéticas sobre autoconcepto aquí
+        ];
+
+        function abrirModal() {
+            const modal = document.getElementById("modal");
+            modal.style.display = "block";
+            generarFrase(); // Generar una frase al abrir la modal
+        }
+
+        function cerrarModal() {
+            const modal = document.getElementById("modal");
+            modal.style.display = "none";
+        }
+
+        function generarFrase() {
+            // Seleccionar aleatoriamente un inicio de frase
+            const inicioFrase = iniciosFrases[Math.floor(Math.random() * iniciosFrases.length)];
+            
+            // Mostrar la frase generada
+            document.getElementById("fraseGenerada").textContent = inicioFrase;
+        }
+    </script>
+</body>
+</html>
